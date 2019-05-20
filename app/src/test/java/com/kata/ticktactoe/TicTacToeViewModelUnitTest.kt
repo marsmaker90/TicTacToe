@@ -1,6 +1,6 @@
 package com.kata.ticktactoe
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 
 
@@ -20,6 +20,12 @@ class TicTacToeViewModelUnitTest {
     @Test
     fun testShouldReturnTrueIfFirstMoveIsByPlayerX() {
         assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
+    }
+
+    @Test
+    fun testShouldReturnTrueIfPlayerMoveIsValidAndStored() {
+        assertNotNull(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertSame(ticTacToeViewModel.getPlayBoardByIndex(1), TicTacToeViewModel.PLAYER_X_ID)
     }
 
 
