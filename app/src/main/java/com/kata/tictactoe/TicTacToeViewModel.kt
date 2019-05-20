@@ -148,6 +148,6 @@ class TicTacToeViewModel : ViewModel() {
         }
     }
 
-
+    fun getGameMoveCounter() = GAME_MOVE_COUNTER
 
 }
