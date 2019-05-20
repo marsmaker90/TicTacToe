@@ -10,6 +10,7 @@ class TicTacToeViewModel : ViewModel() {
     companion object {
         const val PLAYER_X_ID = 1
         const val PLAYER_O_ID = 2
+        private var GAME_MOVE_COUNTER = 0
     }
 
     fun getCurrentPlayer(): Int {
@@ -21,12 +22,18 @@ class TicTacToeViewModel : ViewModel() {
     }
 
     fun storePlayerMoves(position: Int, playerTag: Int): Boolean {
-        return if (getPlayBoardByIndex(position) == 0) {
-            updatePlayBoardIndex(position, playerTag)
-            updateCurrentPlayer(playerTag)
-            true
+
+        if (GAME_MOVE_COUNTER <= 9) {
+            if (getPlayBoardByIndex(position) == 0) {
+                updatePlayBoardIndex(position, playerTag)
+                updateCurrentPlayer(playerTag)
+                GAME_MOVE_COUNTER = GAME_MOVE_COUNTER.plus(1)
+                return true
+            } else {
+                return false
+            }
         } else {
-            false
+            return false
         }
 
     }
@@ -48,12 +55,14 @@ class TicTacToeViewModel : ViewModel() {
     fun isWinnerByRow(): Boolean {
         IntRange(0, 2).forEach { index ->
             if (checkIndexIsNotEmpty(index, 0)
-                && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))) {
+                && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))
+            ) {
                 return true
             }
         }
         return false
     }
+
     fun isWinnerByColumn(): Boolean {
         IntRange(0, 2).forEach { index ->
             if (checkIndexIsNotEmpty(0, index) &&
@@ -67,7 +76,11 @@ class TicTacToeViewModel : ViewModel() {
 
     fun isWinnerByDiagonal(): Boolean {
         return checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
-            checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
+                checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
+    }
+
+    fun isMatchDrawn(): Boolean {
+        return GAME_MOVE_COUNTER == 9
     }
 
 

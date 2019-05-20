@@ -95,4 +95,18 @@ class TicTacToeViewModelUnitTest {
     }
 
 
+    @Test
+    fun testShouldReturnTrueIfGameIsFinishedByExhaustingAllMovesForBothThePlayers() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(3, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(5, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.isMatchDrawn())
+    }
+
 }
