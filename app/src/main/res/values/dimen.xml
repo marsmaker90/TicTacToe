@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="row_height_0dp">0dp</dimen>
+    <dimen name="row_item_width_0dp">0dp</dimen>
+    <dimen name="result_view_text_size">18sp</dimen>
+</resources>

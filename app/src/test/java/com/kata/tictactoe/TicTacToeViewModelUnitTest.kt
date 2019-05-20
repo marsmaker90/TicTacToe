@@ -1,4 +1,4 @@
-package com.kata.ticktactoe
+package com.kata.tictactoe
 
 import org.junit.Assert.*
 import org.junit.Test
@@ -108,6 +108,7 @@ class TicTacToeViewModelUnitTest {
         assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.isMatchDrawn())
     }
+
     @Test
     fun testShouldPassIfNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
         assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_X_ID))

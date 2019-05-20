@@ -1,4 +1,4 @@
-package com.kata.ticktactoe
+package com.kata.tictactoe
 
 import androidx.lifecycle.ViewModel
 
