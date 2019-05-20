@@ -20,11 +20,20 @@ class TicTacToeViewModel : ViewModel() {
         return mBoard
     }
 
-    fun storePlayerMoves(position: Int, playerTag: Int) {
-        getBoard()[position / 3][position % 3] = playerTag
+    fun storePlayerMoves(position: Int, playerTag: Int): Boolean {
+        return if (getPlayBoardByIndex(position) == 0) {
+            updatePlayBoardIndex(position, playerTag)
+            true
+        } else {
+            false
+        }
+
     }
 
     fun getPlayBoardByIndex(position: Int) = getBoard()[position / 3][position % 3]
 
+    private fun updatePlayBoardIndex(position: Int, playerTag: Int) {
+        getBoard()[position / 3][position % 3] = playerTag
+    }
 
 }

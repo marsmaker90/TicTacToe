@@ -23,10 +23,17 @@ class TicTacToeViewModelUnitTest {
     }
 
     @Test
-    fun testShouldReturnTrueIfPlayerMoveIsValidAndStored() {
+    fun testShouldPassIfPlayerMoveIsValidAndStored() {
         assertNotNull(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertSame(ticTacToeViewModel.getPlayBoardByIndex(1), TicTacToeViewModel.PLAYER_X_ID)
     }
 
+    @Test
+    fun testShouldReturnFalseIfSelectedPositionHasAlreadyTakenByAnyPlayer() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID))
+    }
 
 }
