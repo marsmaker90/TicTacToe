@@ -46,8 +46,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.button5, R.id.button6,
             R.id.button7, R.id.button8,
             R.id.button9 -> checkAndRecordPlayerMove(view)
+
+            R.id.resetButton -> {
+                removeAllButtonText()
+                ticTacToeViewModel.resetPlayBoard()
+            }
         }
     }
+
+    private fun removeAllButtonText() {
+        matchSummary.text = ""
+        IntRange(0, 8).forEach {
+            tableLayout.findViewWithTag<Button>(it).text = ""
+        }
+
+    }
+
 
     private fun checkAndRecordPlayerMove(view: View) {
         if (ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID) {
