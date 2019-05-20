@@ -78,4 +78,14 @@ class TicTacToeViewModelUnitTest {
     }
 
 
+    @Test
+    fun testShouldPassIfAnyPlayerHaveWonByDiagonal() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.isWinnerByDiagonal())
+    }
+
+
+
 }
