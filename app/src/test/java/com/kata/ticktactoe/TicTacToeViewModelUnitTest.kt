@@ -12,9 +12,15 @@ class TicTacToeViewModelUnitTest {
     fun testShouldReturnTrueIfAllMovesAreLegal() {
         (0..2).forEach { i ->
             (0..2).forEach { j ->
-                assertTrue(ticTacToeViewModel.mBoard[i][j] == 0)
+                assertTrue(ticTacToeViewModel.getBoard()[i][j] == 0)
             }
         }
     }
+
+    @Test
+    fun testShouldReturnTrueIfFirstMoveIsByPlayerX() {
+        assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
+    }
+
 
 }
