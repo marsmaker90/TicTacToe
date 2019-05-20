@@ -69,6 +69,13 @@ class TicTacToeViewModelUnitTest {
         assertTrue(ticTacToeViewModel.isWinnerByColumn())
     }
 
+    @Test
+    fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarColumn() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID))
+        assertFalse(ticTacToeViewModel.isWinnerByColumn())
+    }
 
 
 }
