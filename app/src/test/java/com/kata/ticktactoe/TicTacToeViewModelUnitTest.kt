@@ -61,5 +61,14 @@ class TicTacToeViewModelUnitTest {
         assertFalse(ticTacToeViewModel.isWinnerByRow())
     }
 
+    @Test
+    fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfColumnIsNotEmptyAndOtherTwoIndicesAreSame() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.isWinnerByColumn())
+    }
+
+
 
 }

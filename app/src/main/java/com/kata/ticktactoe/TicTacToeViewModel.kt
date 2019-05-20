@@ -54,6 +54,16 @@ class TicTacToeViewModel : ViewModel() {
         }
         return false
     }
+    fun isWinnerByColumn(): Boolean {
+        IntRange(0, 2).forEach { columnPosition ->
+            if (checkIndexIsNotEmpty(0, columnPosition) &&
+                compareIndices(Pair(0, columnPosition), Pair(1, columnPosition), Pair(2, columnPosition))
+            ) {
+                return true
+            }
+        }
+        return false
+    }
 
     private fun checkIndexIsNotEmpty(firstIndex: Int, secondIndex: Int) = getBoard()[firstIndex][secondIndex] > 0
 
