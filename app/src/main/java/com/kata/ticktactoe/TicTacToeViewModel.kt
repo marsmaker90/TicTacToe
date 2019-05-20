@@ -23,6 +23,7 @@ class TicTacToeViewModel : ViewModel() {
     fun storePlayerMoves(position: Int, playerTag: Int): Boolean {
         return if (getPlayBoardByIndex(position) == 0) {
             updatePlayBoardIndex(position, playerTag)
+            updateCurrentPlayer(playerTag)
             true
         } else {
             false
@@ -35,5 +36,14 @@ class TicTacToeViewModel : ViewModel() {
     private fun updatePlayBoardIndex(position: Int, playerTag: Int) {
         getBoard()[position / 3][position % 3] = playerTag
     }
+
+    private fun updateCurrentPlayer(playerTag: Int) {
+        mCurrentPlayer = if (playerTag == PLAYER_X_ID) {
+            PLAYER_O_ID
+        } else {
+            PLAYER_X_ID
+        }
+    }
+
 
 }
