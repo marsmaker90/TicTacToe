@@ -3,6 +3,7 @@ package com.kata.tictactoe
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -67,14 +68,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID) {
             val isValidMove =
                 ticTacToeViewModel.storePlayerMoves(view.tag.toString().toInt(), TicTacToeViewModel.PLAYER_X_ID)
-            if (isValidMove) {
+            if (isValidMove.first) {
                 (view as Button).text = getString(R.string.player_x)
+            } else {
+                Toast.makeText(this, isValidMove.second, Toast.LENGTH_LONG).show()
             }
         } else {
             val isValidMove =
                 ticTacToeViewModel.storePlayerMoves(view.tag.toString().toInt(), TicTacToeViewModel.PLAYER_O_ID)
-            if (isValidMove) {
+            if (isValidMove.first) {
                 (view as Button).text = getString(R.string.player_o)
+            } else {
+                Toast.makeText(this, isValidMove.second, Toast.LENGTH_LONG).show()
             }
         }
 

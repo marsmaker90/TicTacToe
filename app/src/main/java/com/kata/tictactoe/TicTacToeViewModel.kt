@@ -20,6 +20,8 @@ class TicTacToeViewModel : ViewModel() {
         const val WON_BY_COLUMN = "Won by column"
         const val WON_BY_ROW = "Won by row"
         const val WON_BY_DIAGONAL = "Won diagonally"
+        const val ALREADY_PLAYED_POSITION = "A player has already played this position"
+        const val GAME_FINISHED = "Game finished. No more moves allowed."
     }
 
     fun getCurrentPlayer(): Int {
@@ -30,19 +32,19 @@ class TicTacToeViewModel : ViewModel() {
         return mBoard
     }
 
-    fun storePlayerMoves(position: Int, playerTag: Int): Boolean {
+    fun storePlayerMoves(position: Int, playerTag: Int): Pair<Boolean, String> {
 
         if (!isGameFinished && GAME_MOVE_COUNTER <= 9) {
             if (getPlayBoardByIndex(position) == 0) {
                 updatePlayBoardIndex(position, playerTag)
                 updateCurrentPlayer(playerTag)
                 GAME_MOVE_COUNTER = GAME_MOVE_COUNTER.plus(1)
-                return true
+                return  Pair(true, "")
             } else {
-                return false
+                return Pair(false, ALREADY_PLAYED_POSITION)
             }
         } else {
-            return false
+            return Pair(false, GAME_FINISHED)
         }
 
     }
