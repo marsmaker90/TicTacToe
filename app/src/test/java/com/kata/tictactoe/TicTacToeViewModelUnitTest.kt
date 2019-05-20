@@ -10,6 +10,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnTrueIfAllMovesAreLegal() {
+        ticTacToeViewModel.resetPlayBoard()
         (0..2).forEach { i ->
             (0..2).forEach { j ->
                 assertTrue(ticTacToeViewModel.getBoard()[i][j] == 0)
@@ -19,17 +20,20 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnTrueIfFirstMoveIsByPlayerX() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
     }
 
     @Test
     fun testShouldPassIfPlayerMoveIsValidAndStored() {
+        ticTacToeViewModel.resetPlayBoard()
         assertNotNull(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertSame(ticTacToeViewModel.getPlayBoardByIndex(1), TicTacToeViewModel.PLAYER_X_ID)
     }
 
     @Test
     fun testShouldReturnFalseIfSelectedPositionHasAlreadyTakenByAnyPlayer() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_O_ID))
@@ -38,6 +42,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldPassIfPlayerSwappedAfterEachValidMove() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_O_ID)
@@ -47,6 +52,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfRowIsNotEmptyAndOtherTwoIndicesAreSame() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(3, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(5, TicTacToeViewModel.PLAYER_X_ID))
@@ -55,6 +61,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarRow() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_O_ID))
@@ -63,6 +70,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfColumnIsNotEmptyAndOtherTwoIndicesAreSame() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID))
@@ -71,6 +79,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarColumn() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID))
@@ -80,6 +89,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldPassIfAnyPlayerHaveWonByDiagonal() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_O_ID))
@@ -88,6 +98,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarDiagonalPattern() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID))
@@ -97,6 +108,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldReturnTrueIfGameIsFinishedByExhaustingAllMovesForBothThePlayers() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_O_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
@@ -111,6 +123,7 @@ class TicTacToeViewModelUnitTest {
 
     @Test
     fun testShouldPassIfNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
+        ticTacToeViewModel.resetPlayBoard()
         assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID))

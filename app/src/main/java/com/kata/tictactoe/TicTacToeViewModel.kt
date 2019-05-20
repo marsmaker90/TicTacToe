@@ -114,4 +114,12 @@ class TicTacToeViewModel : ViewModel() {
         return firstIndexValue == secondIndexValue &&
                 firstIndexValue == thirdIndexValue
     }
+
+    fun resetPlayBoard() {
+        GAME_MOVE_COUNTER = 0
+        mCurrentPlayer = PLAYER_X_ID
+        mBoard = Array(3) { IntArray(3) }
+        isGameFinished = false
+    }
+
 }
