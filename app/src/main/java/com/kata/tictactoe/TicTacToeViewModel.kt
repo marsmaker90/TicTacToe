@@ -12,6 +12,14 @@ class TicTacToeViewModel : ViewModel() {
         const val PLAYER_X_ID = 1
         const val PLAYER_O_ID = 2
         private var GAME_MOVE_COUNTER = 0
+
+        const val PLAYER_X_NAME = "Player X"
+        const val PLAYER_O_NAME = "Player O"
+
+        const val MATCH_DRAWN = "Match Drawn"
+        const val WON_BY_COLUMN = "Won by column"
+        const val WON_BY_ROW = "Won by row"
+        const val WON_BY_DIAGONAL = "Won diagonally"
     }
 
     fun getCurrentPlayer(): Int {
@@ -121,5 +129,25 @@ class TicTacToeViewModel : ViewModel() {
         mBoard = Array(3) { IntArray(3) }
         isGameFinished = false
     }
+
+    fun identifyIfAnyPlayerHadWon(): String {
+        return when {
+            isWinnerByColumn() -> getWinnerByName(getCurrentPlayer()) + " "+ WON_BY_COLUMN
+            isWinnerByRow() -> getWinnerByName(getCurrentPlayer()) + " " + WON_BY_ROW
+            isWinnerByDiagonal() -> getWinnerByName(getCurrentPlayer()) + " "+ WON_BY_DIAGONAL
+            isMatchDrawn() -> MATCH_DRAWN
+            else -> ""
+        }
+    }
+
+    private fun getWinnerByName(player: Int): String {
+        return if (player == PLAYER_X_ID) {
+            PLAYER_O_NAME
+        } else {
+            PLAYER_X_NAME
+        }
+    }
+
+
 
 }
