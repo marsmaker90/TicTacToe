@@ -108,5 +108,13 @@ class TicTacToeViewModelUnitTest {
         assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID))
         assertTrue(ticTacToeViewModel.isMatchDrawn())
     }
+    @Test
+    fun testShouldPassIfNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.isWinnerByRow())
+        assertFalse(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID))
+    }
 
 }

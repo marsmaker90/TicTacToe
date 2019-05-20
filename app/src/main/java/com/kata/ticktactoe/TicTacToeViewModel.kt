@@ -6,6 +6,7 @@ class TicTacToeViewModel : ViewModel() {
 
     private var mBoard = Array(3) { IntArray(3) }
     private var mCurrentPlayer = PLAYER_X_ID
+    var isGameFinished: Boolean = false
 
     companion object {
         const val PLAYER_X_ID = 1
@@ -23,7 +24,7 @@ class TicTacToeViewModel : ViewModel() {
 
     fun storePlayerMoves(position: Int, playerTag: Int): Boolean {
 
-        if (GAME_MOVE_COUNTER <= 9) {
+        if (!isGameFinished && GAME_MOVE_COUNTER <= 9) {
             if (getPlayBoardByIndex(position) == 0) {
                 updatePlayBoardIndex(position, playerTag)
                 updateCurrentPlayer(playerTag)
@@ -57,6 +58,7 @@ class TicTacToeViewModel : ViewModel() {
             if (checkIndexIsNotEmpty(index, 0)
                 && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))
             ) {
+                isGameFinished = true
                 return true
             }
         }
@@ -68,6 +70,7 @@ class TicTacToeViewModel : ViewModel() {
             if (checkIndexIsNotEmpty(0, index) &&
                 compareIndices(Pair(0, index), Pair(1, index), Pair(2, index))
             ) {
+                isGameFinished = true
                 return true
             }
         }
@@ -75,12 +78,24 @@ class TicTacToeViewModel : ViewModel() {
     }
 
     fun isWinnerByDiagonal(): Boolean {
-        return checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
-                checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
+        if (checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
+            checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
+        ) {
+            isGameFinished = true
+            return true
+        } else {
+            return false
+        }
     }
 
     fun isMatchDrawn(): Boolean {
-        return GAME_MOVE_COUNTER == 9
+        return if (GAME_MOVE_COUNTER == 9) {
+            isGameFinished = true
+            true
+        } else {
+            false
+        }
+
     }
 
 
