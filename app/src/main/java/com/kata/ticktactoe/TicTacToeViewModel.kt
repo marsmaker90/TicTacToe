@@ -45,5 +45,29 @@ class TicTacToeViewModel : ViewModel() {
         }
     }
 
+    fun isWinnerByRow(): Boolean {
+        IntRange(0, 2).forEach { index ->
+            if (checkIndexIsNotEmpty(index, 0)
+                && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))) {
+                return true
+            }
+        }
+        return false
+    }
 
+    private fun checkIndexIsNotEmpty(firstIndex: Int, secondIndex: Int) = getBoard()[firstIndex][secondIndex] > 0
+
+    private fun compareIndices(
+        firstPosition: Pair<Int, Int>,
+        secondPosition: Pair<Int, Int>,
+        thirdPosition: Pair<Int, Int>
+    ): Boolean {
+
+        val firstIndexValue = getBoard()[firstPosition.first][firstPosition.second]
+        val secondIndexValue = getBoard()[secondPosition.first][secondPosition.second]
+        val thirdIndexValue = getBoard()[thirdPosition.first][thirdPosition.second]
+
+        return firstIndexValue == secondIndexValue &&
+                firstIndexValue == thirdIndexValue
+    }
 }

@@ -45,5 +45,13 @@ class TicTacToeViewModelUnitTest {
 
     }
 
+    @Test
+    fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfRowIsNotEmptyAndOtherTwoIndicesAreSame() {
+        assertTrue(ticTacToeViewModel.storePlayerMoves(3, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.storePlayerMoves(5, TicTacToeViewModel.PLAYER_X_ID))
+        assertTrue(ticTacToeViewModel.isWinnerByRow())
+    }
+
 
 }
