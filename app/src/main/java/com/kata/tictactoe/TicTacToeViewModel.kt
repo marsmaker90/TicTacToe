@@ -1,115 +1,145 @@
 package com.kata.tictactoe
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.kata.tictactoe.utils.GameBoardPosition
+import com.kata.tictactoe.utils.MatchStatus
+import com.kata.tictactoe.utils.MatchSummary
+import com.kata.tictactoe.utils.Player
 
 class TicTacToeViewModel : ViewModel() {
 
-    private var mBoard = Array(3) { IntArray(3) }
-    private var mCurrentPlayer = PLAYER_X_ID
+    private var mGameBoard = Array(3) { IntArray(3) }
+    private var mCurrentPlayer = Player.PLAYER_X_ID
     var isGameFinished: Boolean = false
 
+    private var mMatchSummary: MatchSummary = MatchSummary()
+    private var isValidMove = true
+
     companion object {
-        const val PLAYER_X_ID = 1
-        const val PLAYER_O_ID = 2
         private var GAME_MOVE_COUNTER = 0
-
-        const val PLAYER_X_NAME = "Player X"
-        const val PLAYER_O_NAME = "Player O"
-
         const val MATCH_DRAWN = "Match Drawn"
         const val WON_BY_COLUMN = "Won by column"
         const val WON_BY_ROW = "Won by row"
         const val WON_BY_DIAGONAL = "Won diagonally"
-        const val ALREADY_PLAYED_POSITION = "A player has already played this position"
-        const val GAME_FINISHED = "Game finished. No more moves allowed."
     }
 
     fun getCurrentPlayer(): Int {
         return mCurrentPlayer
     }
 
-    fun getBoard(): Array<IntArray> {
-        return mBoard
+    private fun getGameBoard(): Array<IntArray> {
+        return mGameBoard
     }
 
-    fun storePlayerMoves(position: Int, playerTag: Int): Pair<Boolean, String> {
-
+    fun storePlayerMoves(@GameBoardPosition.Position position: Int) {
         if (!isGameFinished && GAME_MOVE_COUNTER <= 9) {
-            if (getPlayBoardByIndex(position) == 0) {
-                updatePlayBoardIndex(position, playerTag)
-                updateCurrentPlayer(playerTag)
+            if (getGameBoardByIndex(position) == 0) {
+                updateGameBoardIndex(position, getCurrentPlayer())
+                updateCurrentPlayer(getCurrentPlayer())
                 GAME_MOVE_COUNTER = GAME_MOVE_COUNTER.plus(1)
-                return  Pair(true, "")
-            } else {
-                return Pair(false, ALREADY_PLAYED_POSITION)
+                isValidMove = true
+                mMatchSummary = MatchSummary(isValidMove = isValidMove)
+                updateMatchSummary()
             }
         } else {
-            return Pair(false, GAME_FINISHED)
+            isValidMove = false
+            mMatchSummary = MatchSummary(
+                matchStatus = MatchStatus.MATCH_END,
+                isValidMove = isValidMove
+            )
         }
-
     }
 
-    fun getPlayBoardByIndex(position: Int) = getBoard()[position / 3][position % 3]
+    fun getPlayerName(context: Context): String {
+        return if (getMatchSummary().isValidMove) {
+            return if (getCurrentPlayer() == Player.PLAYER_X_ID) {
+                context.getString(R.string.player_o)
+            } else {
+                context.getString(R.string.player_x)
+            }
+        } else {
+            ""
+        }
+    }
 
-    private fun updatePlayBoardIndex(position: Int, playerTag: Int) {
-        getBoard()[position / 3][position % 3] = playerTag
+    fun getGameBoardByIndex(position: Int) = getGameBoard()[position / 3][position % 3]
+
+    private fun updateGameBoardIndex(position: Int, playerTag: Int) {
+        getGameBoard()[position / 3][position % 3] = playerTag
     }
 
     private fun updateCurrentPlayer(playerTag: Int) {
-        mCurrentPlayer = if (playerTag == PLAYER_X_ID) {
-            PLAYER_O_ID
+        mCurrentPlayer = if (playerTag == Player.PLAYER_X_ID) {
+            Player.PLAYER_O_ID
         } else {
-            PLAYER_X_ID
+            Player.PLAYER_X_ID
         }
     }
 
-    fun isWinnerByRow(): Boolean {
+    private fun validateWinnerByRow() {
         IntRange(0, 2).forEach { index ->
             if (checkIndexIsNotEmpty(index, 0)
                 && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))
             ) {
                 isGameFinished = true
-                return true
+                mMatchSummary = MatchSummary(
+                    matchStatus = MatchStatus.WIN_BY_ROW,
+                    matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_ROW,
+                    isValidMove = isValidMove
+                )
             }
         }
-        return false
     }
 
-    fun isWinnerByColumn(): Boolean {
+    private fun validateWinnerByColumn() {
         IntRange(0, 2).forEach { index ->
             if (checkIndexIsNotEmpty(0, index) &&
                 compareIndices(Pair(0, index), Pair(1, index), Pair(2, index))
             ) {
                 isGameFinished = true
-                return true
+                mMatchSummary = MatchSummary(
+                    matchStatus = MatchStatus.WIN_BY_COLUMN,
+                    matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_COLUMN,
+                    isValidMove = isValidMove
+                )
             }
         }
-        return false
     }
 
-    fun isWinnerByDiagonal(): Boolean {
+    private fun validateWinnerByDiagonal() {
         if (checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
             checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
         ) {
             isGameFinished = true
-            return true
-        } else {
-            return false
+            mMatchSummary = MatchSummary(
+                matchStatus = MatchStatus.WIN_BY_DIAGONAL,
+                matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_DIAGONAL,
+                isValidMove = isValidMove
+            )
         }
     }
 
-    fun isMatchDrawn(): Boolean {
-        return if (GAME_MOVE_COUNTER == 9) {
+    private fun validateMatchDrawn() {
+        if (GAME_MOVE_COUNTER == 9) {
             isGameFinished = true
-            true
-        } else {
-            false
+            if (mMatchSummary.matchStatus != MatchStatus.WIN_BY_ROW &&
+                mMatchSummary.matchStatus != MatchStatus.WIN_BY_COLUMN &&
+                mMatchSummary.matchStatus != MatchStatus.WIN_BY_DIAGONAL
+            ) {
+                mMatchSummary = MatchSummary(
+                    matchStatus = MatchStatus.DRAW,
+                    matchSummary = MATCH_DRAWN,
+                    isValidMove = isValidMove
+
+                )
+            }
         }
 
     }
 
 
-    private fun checkIndexIsNotEmpty(firstIndex: Int, secondIndex: Int) = getBoard()[firstIndex][secondIndex] > 0
+    private fun checkIndexIsNotEmpty(firstIndex: Int, secondIndex: Int) = getGameBoard()[firstIndex][secondIndex] > 0
 
     private fun compareIndices(
         firstPosition: Pair<Int, Int>,
@@ -117,39 +147,40 @@ class TicTacToeViewModel : ViewModel() {
         thirdPosition: Pair<Int, Int>
     ): Boolean {
 
-        val firstIndexValue = getBoard()[firstPosition.first][firstPosition.second]
-        val secondIndexValue = getBoard()[secondPosition.first][secondPosition.second]
-        val thirdIndexValue = getBoard()[thirdPosition.first][thirdPosition.second]
+        val firstIndexValue = getGameBoard()[firstPosition.first][firstPosition.second]
+        val secondIndexValue = getGameBoard()[secondPosition.first][secondPosition.second]
+        val thirdIndexValue = getGameBoard()[thirdPosition.first][thirdPosition.second]
 
         return firstIndexValue == secondIndexValue &&
                 firstIndexValue == thirdIndexValue
     }
 
-    fun resetPlayBoard() {
+    fun resetGameBoard() {
         GAME_MOVE_COUNTER = 0
-        mCurrentPlayer = PLAYER_X_ID
-        mBoard = Array(3) { IntArray(3) }
+        mCurrentPlayer = Player.PLAYER_X_ID
+        mGameBoard = Array(3) { IntArray(3) }
         isGameFinished = false
     }
 
-    fun identifyIfAnyPlayerHadWon(): String {
-        return when {
-            isWinnerByColumn() -> getWinnerByName(getCurrentPlayer()) + " "+ WON_BY_COLUMN
-            isWinnerByRow() -> getWinnerByName(getCurrentPlayer()) + " " + WON_BY_ROW
-            isWinnerByDiagonal() -> getWinnerByName(getCurrentPlayer()) + " "+ WON_BY_DIAGONAL
-            isMatchDrawn() -> MATCH_DRAWN
-            else -> ""
+    fun getMatchSummary(): MatchSummary {
+        return mMatchSummary
+    }
+
+
+    private fun updateMatchSummary() {
+        if (GAME_MOVE_COUNTER > 4) {
+            validateWinnerByColumn()
+            validateWinnerByRow()
+            validateWinnerByDiagonal()
+            validateMatchDrawn()
         }
     }
 
     private fun getWinnerByName(player: Int): String {
-        return if (player == PLAYER_X_ID) {
-            PLAYER_O_NAME
+        return if (player == Player.PLAYER_X_ID) {
+            Player.PLAYER_O_NAME
         } else {
-            PLAYER_X_NAME
+            Player.PLAYER_X_NAME
         }
     }
-
-    fun getGameMoveCounter() = GAME_MOVE_COUNTER
-
 }

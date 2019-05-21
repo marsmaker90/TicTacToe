@@ -1,6 +1,10 @@
 package com.kata.tictactoe
 
+import com.kata.tictactoe.utils.GameBoardPosition
+import com.kata.tictactoe.utils.MatchStatus
+import com.kata.tictactoe.utils.Player
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
 
@@ -8,137 +12,166 @@ class TicTacToeViewModelUnitTest {
 
     private var ticTacToeViewModel = TicTacToeViewModel()
 
-    @Test
-    fun testShouldReturnTrueIfAllMovesAreLegal() {
-        ticTacToeViewModel.resetPlayBoard()
-        (0..2).forEach { i ->
-            (0..2).forEach { j ->
-                assertTrue(ticTacToeViewModel.getBoard()[i][j] == 0)
-            }
-        }
+    @Before
+    fun resetGameBoard() {
+        ticTacToeViewModel.resetGameBoard()
     }
 
     @Test
-    fun testShouldReturnTrueIfFirstMoveIsByPlayerX() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
+    fun testToCheckWhetherTheFirstMoveDoneByPlayerX() {
+        assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
     }
 
     @Test
-    fun testShouldPassIfPlayerMoveIsValidAndStored() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertNotNull(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID))
-        assertSame(ticTacToeViewModel.getPlayBoardByIndex(1), TicTacToeViewModel.PLAYER_X_ID)
+    fun testToStoreThePlayerMoveAndCheckPlayerAtThatParticularIndex() {
+        assertNotNull(ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_1))
+        assertSame(ticTacToeViewModel.getGameBoardByIndex(GameBoardPosition.INDEX_1), Player.PLAYER_X_ID)
     }
 
     @Test
-    fun testShouldReturnFalseIfSelectedPositionHasAlreadyTakenByAnyPlayer() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertFalse(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID).first)
-    }
-
-    @Test
-    fun testShouldPassIfPlayerSwappedAfterEachValidMove() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_O_ID)
-        assertFalse(ticTacToeViewModel.getCurrentPlayer() == TicTacToeViewModel.PLAYER_X_ID)
+    fun testSwappingOfPlayerAfterMoveSuccessfullyStored() {
+        assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_1)
+        assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_O_ID)
+        assertNotEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
 
     }
 
     @Test
-    fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfRowIsNotEmptyAndOtherTwoIndicesAreSame() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(3, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(5, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.isWinnerByRow())
+    fun testWhetherAnyPlayerWonByRow() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_3,
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_2,
+                GameBoardPosition.INDEX_5
+            )
+        )
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
     }
 
     @Test
-    fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarRow() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertFalse(ticTacToeViewModel.isWinnerByRow())
+    fun testAlternatePlayersHavePlayedOnTheSimilarRow() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_6,
+                GameBoardPosition.INDEX_7,
+                GameBoardPosition.INDEX_8
+            )
+        )
+        assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
     }
 
     @Test
-    fun testShouldPassIfAnyPlayerHaveWonByRowWhenFirstIndexOfColumnIsNotEmptyAndOtherTwoIndicesAreSame() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.isWinnerByColumn())
+    fun testAnyPlayerHaveWonByRowWhenFirstIndexOfColumnIsNotEmptyAndOtherTwoIndicesAreSame() {
+
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_2,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_3,
+                GameBoardPosition.INDEX_7
+            )
+        )
+
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_COLUMN)
     }
 
     @Test
-    fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarColumn() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertFalse(ticTacToeViewModel.isWinnerByColumn())
-    }
-
-
-    @Test
-    fun testShouldPassIfAnyPlayerHaveWonByDiagonal() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.isWinnerByDiagonal())
-    }
-
-    @Test
-    fun testShouldReturnFalseIfAlternatePlayersHavePlayedOnTheSimilarDiagonalPattern() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertFalse(ticTacToeViewModel.isWinnerByDiagonal())
+    fun testAlternatePlayersHavePlayedOnTheSimilarColumn() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_7
+            )
+        )
+        assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_COLUMN)
     }
 
 
     @Test
-    fun testShouldReturnTrueIfGameIsFinishedByExhaustingAllMovesForBothThePlayers() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(4, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(7, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(6, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(3, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(5, TicTacToeViewModel.PLAYER_O_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.isMatchDrawn())
+    fun testAnyPlayerHaveWonByDiagonal() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_2,
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_3,
+                GameBoardPosition.INDEX_6
+            )
+        )
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_DIAGONAL)
     }
 
     @Test
-    fun testShouldPassIfNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.isWinnerByRow())
-        assertFalse(ticTacToeViewModel.storePlayerMoves(8, TicTacToeViewModel.PLAYER_X_ID).first)
+    fun testAlternatePlayersHavePlayedOnTheSimilarDiagonalPattern() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_2,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_6
+            )
+        )
+        assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_DIAGONAL)
+    }
+
+
+    @Test
+    fun testGameIsDrawByExhaustingAllMovesForBothThePlayers() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_0,
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_7,
+                GameBoardPosition.INDEX_6,
+                GameBoardPosition.INDEX_2,
+                GameBoardPosition.INDEX_3,
+                GameBoardPosition.INDEX_5,
+                GameBoardPosition.INDEX_8
+            )
+        )
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.DRAW)
     }
 
     @Test
-    fun testShouldPassIfPlayerHasWonTheMatch() {
-        ticTacToeViewModel.resetPlayBoard()
-        assertTrue(ticTacToeViewModel.storePlayerMoves(0, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(1, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertTrue(ticTacToeViewModel.storePlayerMoves(2, TicTacToeViewModel.PLAYER_X_ID).first)
-        assertNotEquals("", ticTacToeViewModel.identifyIfAnyPlayerHadWon())
-        assertNotSame("Match Drawn", ticTacToeViewModel.identifyIfAnyPlayerHadWon())
+    fun testNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_0,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_5,
+                GameBoardPosition.INDEX_2
+            )
+        )
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_8)
+        assertFalse(ticTacToeViewModel.getMatchSummary().isValidMove)
+    }
+
+    @Test
+    fun testPlayerHasWonTheMatch() {
+        storePlayerMoves(
+            intArrayOf(
+                GameBoardPosition.INDEX_0,
+                GameBoardPosition.INDEX_3,
+                GameBoardPosition.INDEX_1,
+                GameBoardPosition.INDEX_4,
+                GameBoardPosition.INDEX_2
+            )
+        )
+        assertTrue(ticTacToeViewModel.getMatchSummary().isValidMove)
+        assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.DRAW)
+        assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
+    }
+
+
+    private fun storePlayerMoves(indices: IntArray) {
+        indices.forEach { index -> ticTacToeViewModel.storePlayerMoves(index) }
     }
 
 }
