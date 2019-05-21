@@ -13,7 +13,7 @@
             android:layout_height="@dimen/row_height_0dp"
             android:layout_weight="1">
         <Button
-                android:id="@+id/button1"
+                android:id="@+id/buttonTopRowLeft"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
                 style="?android:attr/buttonBarButtonStyle"
@@ -22,7 +22,7 @@
                 android:layout_height="match_parent"/>
 
         <Button
-                android:id="@+id/button2"
+                android:id="@+id/buttonTopRowMiddle"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -30,7 +30,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"/>
         <Button
-                android:id="@+id/button3"
+                android:id="@+id/buttonTopRowRight"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -44,7 +44,7 @@
             android:layout_height="@dimen/row_height_0dp"
             android:layout_weight="1">
         <Button
-                android:id="@+id/button4"
+                android:id="@+id/buttonCenterRowLeft"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -52,7 +52,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"/>
         <Button
-                android:id="@+id/button5"
+                android:id="@+id/buttonCenterRowMiddle"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"/>
         <Button
-                android:id="@+id/button6"
+                android:id="@+id/buttonCenterRowRight"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -74,7 +74,7 @@
             android:layout_height="@dimen/row_height_0dp"
             android:layout_weight="1">
         <Button
-                android:id="@+id/button7"
+                android:id="@+id/buttonBottomRowLeft"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -82,7 +82,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"/>
         <Button
-                android:id="@+id/button8"
+                android:id="@+id/buttonBottomRowMiddle"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -90,7 +90,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"/>
         <Button
-                android:id="@+id/button9"
+                android:id="@+id/buttonBottomRowRight"
                 style="?android:attr/buttonBarButtonStyle"
                 android:background="@color/buttonColor"
                 android:layout_margin="@dimen/padding_5dp"
@@ -105,7 +105,7 @@
             android:layout_weight="1">
 
         <TextView
-                android:id="@+id/matchSummary"
+                android:id="@+id/textViewMatchSummary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
