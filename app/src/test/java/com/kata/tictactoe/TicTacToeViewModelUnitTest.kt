@@ -18,61 +18,71 @@ class TicTacToeViewModelUnitTest {
     }
 
     @Test
-    fun testToCheckWhetherTheFirstMoveDoneByPlayerX() {
+    fun testShouldCheckWhetherTheFirstMoveAvailableForPlayerX() {
         assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
     }
 
     @Test
-    fun testToStoreThePlayerMoveAndCheckPlayerAtThatParticularIndex() {
-        assertNotNull(ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_1))
-        assertSame(ticTacToeViewModel.getGameBoardByIndex(GameBoardPosition.INDEX_1), Player.PLAYER_X_ID)
+    fun testToStoreThePlayerMoveAndShouldCheckPlayerAtThatParticularIndexIsSameWhoStored() {
+        assertNotNull(ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_TOP_MIDDLE))
+        assertSame(ticTacToeViewModel.getGameBoardByIndex(GameBoardPosition.INDEX_TOP_MIDDLE), Player.PLAYER_X_ID)
     }
 
     @Test
-    fun testSwappingOfPlayerAfterMoveSuccessfullyStored() {
+    fun testShouldCheckSwappingOfPlayerXtoPlayerOAfterMoveSuccessfullyStored() {
         assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
-        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_1)
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_TOP_MIDDLE)
         assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_O_ID)
         assertNotEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
 
     }
 
     @Test
-    fun testWhetherAnyPlayerWonByRow() {
+    fun testShouldCheckSwappingOfPlayerOToPlayerXAfterMoveSuccessfullyStored() {
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_TOP_LEFT)
+        assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_O_ID)
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_TOP_MIDDLE)
+        assertEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_X_ID)
+        assertNotEquals(ticTacToeViewModel.getCurrentPlayer(), Player.PLAYER_O_ID)
+
+    }
+
+    @Test
+    fun testShouldCheckWhetherAnyPlayerWonByRow() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_3,
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_2,
-                GameBoardPosition.INDEX_5
+                GameBoardPosition.INDEX_CENTER_LEFT,
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_TOP_RIGHT,
+                GameBoardPosition.INDEX_CENTER_RIGHT
             )
         )
         assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
     }
 
     @Test
-    fun testAlternatePlayersHavePlayedOnTheSimilarRow() {
+    fun testShouldDeclineWinIfAlternatePlayersPlayedOnTheSameRow() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_6,
-                GameBoardPosition.INDEX_7,
-                GameBoardPosition.INDEX_8
+                GameBoardPosition.INDEX_BOTTOM_LEFT,
+                GameBoardPosition.INDEX_BOTTOM_MIDDLE,
+                GameBoardPosition.INDEX_BOTTOM_RIGHT
             )
         )
         assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
     }
 
     @Test
-    fun testAnyPlayerHaveWonByRowWhenFirstIndexOfColumnIsNotEmptyAndOtherTwoIndicesAreSame() {
+    fun testShouldCheckWhetherAnyPlayerWonByColumn() {
 
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_2,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_3,
-                GameBoardPosition.INDEX_7
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_TOP_RIGHT,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_LEFT,
+                GameBoardPosition.INDEX_BOTTOM_MIDDLE
             )
         )
 
@@ -80,12 +90,12 @@ class TicTacToeViewModelUnitTest {
     }
 
     @Test
-    fun testAlternatePlayersHavePlayedOnTheSimilarColumn() {
+    fun testShouldDeclineWinIfAlternatePlayersPlayedOnTheSameColumn() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_7
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_BOTTOM_MIDDLE
             )
         )
         assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_COLUMN)
@@ -93,26 +103,26 @@ class TicTacToeViewModelUnitTest {
 
 
     @Test
-    fun testAnyPlayerHaveWonByDiagonal() {
+    fun testShouldCheckWhetherAnyPlayerWonByDiagonal() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_2,
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_3,
-                GameBoardPosition.INDEX_6
+                GameBoardPosition.INDEX_TOP_RIGHT,
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_LEFT,
+                GameBoardPosition.INDEX_BOTTOM_LEFT
             )
         )
         assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_DIAGONAL)
     }
 
     @Test
-    fun testAlternatePlayersHavePlayedOnTheSimilarDiagonalPattern() {
+    fun testShouldDeclineWinIfAlternatePlayersPlayedOnSimilarDiagonalPatterns() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_2,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_6
+                GameBoardPosition.INDEX_TOP_RIGHT,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_BOTTOM_LEFT
             )
         )
         assertNotEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_DIAGONAL)
@@ -120,48 +130,48 @@ class TicTacToeViewModelUnitTest {
 
 
     @Test
-    fun testGameIsDrawByExhaustingAllMovesForBothThePlayers() {
+    fun testShouldCheckGameIsDrawWhenBothThePlayersExhaustingAllMoves() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_0,
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_7,
-                GameBoardPosition.INDEX_6,
-                GameBoardPosition.INDEX_2,
-                GameBoardPosition.INDEX_3,
-                GameBoardPosition.INDEX_5,
-                GameBoardPosition.INDEX_8
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_TOP_LEFT,
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_BOTTOM_MIDDLE,
+                GameBoardPosition.INDEX_BOTTOM_LEFT,
+                GameBoardPosition.INDEX_TOP_RIGHT,
+                GameBoardPosition.INDEX_CENTER_LEFT,
+                GameBoardPosition.INDEX_CENTER_RIGHT,
+                GameBoardPosition.INDEX_BOTTOM_RIGHT
             )
         )
         assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.DRAW)
     }
 
     @Test
-    fun testNoMovesAllowedToAnyPlayerIfOneOfThePlayerWinsTheMatch() {
+    fun testShouldCheckNoMovesAllowedToAnyPlayerWhenOneOfThePlayerWinsTheMatch() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_0,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_5,
-                GameBoardPosition.INDEX_2
+                GameBoardPosition.INDEX_TOP_LEFT,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_RIGHT,
+                GameBoardPosition.INDEX_TOP_RIGHT
             )
         )
         assertEquals(ticTacToeViewModel.getMatchSummary().matchStatus, MatchStatus.WIN_BY_ROW)
-        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_8)
+        ticTacToeViewModel.storePlayerMoves(GameBoardPosition.INDEX_BOTTOM_RIGHT)
         assertFalse(ticTacToeViewModel.getMatchSummary().isValidMove)
     }
 
     @Test
-    fun testPlayerHasWonTheMatch() {
+    fun testShouldCheckWhetherAnyPlayerHasWonTheMatch() {
         storePlayerMoves(
             intArrayOf(
-                GameBoardPosition.INDEX_0,
-                GameBoardPosition.INDEX_3,
-                GameBoardPosition.INDEX_1,
-                GameBoardPosition.INDEX_4,
-                GameBoardPosition.INDEX_2
+                GameBoardPosition.INDEX_TOP_LEFT,
+                GameBoardPosition.INDEX_CENTER_LEFT,
+                GameBoardPosition.INDEX_TOP_MIDDLE,
+                GameBoardPosition.INDEX_CENTER_MIDDLE,
+                GameBoardPosition.INDEX_TOP_RIGHT
             )
         )
         assertTrue(ticTacToeViewModel.getMatchSummary().isValidMove)
