@@ -20,31 +20,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun initButton() {
         buttonTopRowLeft.setOnClickListener(this)
-        buttonTopRowLeft.tag = GameBoardPosition.INDEX_0
+        buttonTopRowLeft.tag = GameBoardPosition.INDEX_TOP_LEFT
 
         buttonTopRowMiddle.setOnClickListener(this)
-        buttonTopRowMiddle.tag = GameBoardPosition.INDEX_1
+        buttonTopRowMiddle.tag = GameBoardPosition.INDEX_TOP_MIDDLE
 
         buttonTopRowRight.setOnClickListener(this)
-        buttonTopRowRight.tag = GameBoardPosition.INDEX_2
+        buttonTopRowRight.tag = GameBoardPosition.INDEX_TOP_RIGHT
 
         buttonCenterRowLeft.setOnClickListener(this)
-        buttonCenterRowLeft.tag = GameBoardPosition.INDEX_3
+        buttonCenterRowLeft.tag = GameBoardPosition.INDEX_CENTER_LEFT
 
         buttonCenterRowMiddle.setOnClickListener(this)
-        buttonCenterRowMiddle.tag = GameBoardPosition.INDEX_4
+        buttonCenterRowMiddle.tag = GameBoardPosition.INDEX_CENTER_MIDDLE
 
         buttonCenterRowRight.setOnClickListener(this)
-        buttonCenterRowRight.tag = GameBoardPosition.INDEX_5
+        buttonCenterRowRight.tag = GameBoardPosition.INDEX_CENTER_RIGHT
 
         buttonBottomRowLeft.setOnClickListener(this)
-        buttonBottomRowLeft.tag = GameBoardPosition.INDEX_6
+        buttonBottomRowLeft.tag = GameBoardPosition.INDEX_BOTTOM_LEFT
 
         buttonBottomRowMiddle.setOnClickListener(this)
-        buttonBottomRowMiddle.tag = GameBoardPosition.INDEX_7
+        buttonBottomRowMiddle.tag = GameBoardPosition.INDEX_BOTTOM_MIDDLE
 
         buttonBottomRowRight.setOnClickListener(this)
-        buttonBottomRowRight.tag = GameBoardPosition.INDEX_8
+        buttonBottomRowRight.tag = GameBoardPosition.INDEX_BOTTOM_RIGHT
 
         resetButton.setOnClickListener(this)
     }
@@ -75,18 +75,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun checkAndRecordPlayerMove(view: View) {
         ticTacToeViewModel.storePlayerMoves(view.tag.toString().toInt())
-        (view as Button).text = ticTacToeViewModel.getPlayerName(this)
+        (view as Button).text = ticTacToeViewModel.getPlayerIcon(this)
         disableButtonClickWhenMatchEnds()
+        disableViewAfterSuccessfulMove(view)
+    }
+
+    private fun disableViewAfterSuccessfulMove(view: Button) {
         view.isClickable = false
     }
 
     private fun disableButtonClickWhenMatchEnds() {
-        if (ticTacToeViewModel.getMatchSummary().matchStatus == MatchStatus.MATCH_END) {
-            IntRange(0, 8).forEach {
+        when(ticTacToeViewModel.getMatchSummary().matchStatus) {
+            MatchStatus.MATCH_END -> IntRange(0, 8).forEach {
                 tableLayout.findViewWithTag<Button>(it).isClickable = false
             }
-        } else {
-            textViewMatchSummary.text = ticTacToeViewModel.getMatchSummary().matchSummary
+            else -> textViewMatchSummary.text = ticTacToeViewModel.getMatchSummary().matchSummary
         }
     }
 

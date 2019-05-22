@@ -18,6 +18,7 @@ class TicTacToeViewModel : ViewModel() {
 
     companion object {
         private var GAME_MOVE_COUNTER = 0
+        private var MAX_MOVE_COUNTER = 9
         const val MATCH_DRAWN = "Match Drawn"
         const val WON_BY_COLUMN = "Won by column"
         const val WON_BY_ROW = "Won by row"
@@ -32,36 +33,31 @@ class TicTacToeViewModel : ViewModel() {
         return mGameBoard
     }
 
-    fun storePlayerMoves(@GameBoardPosition.Position position: Int) {
-        if (!isGameFinished && GAME_MOVE_COUNTER <= 9) {
-            if (getGameBoardByIndex(position) == 0) {
-                updateGameBoardIndex(position, getCurrentPlayer())
-                updateCurrentPlayer(getCurrentPlayer())
-                GAME_MOVE_COUNTER = GAME_MOVE_COUNTER.plus(1)
-                isValidMove = true
-                mMatchSummary = MatchSummary(isValidMove = isValidMove)
-                updateMatchSummary()
+    fun storePlayerMoves(@GameBoardPosition.Position index: Int) {
+        when {
+            isGameNotFinishedOrMoveAvailable() -> when {
+                isSlotAvailableForPlayerMove(index) -> {
+                    updateGameBoardIndex(index, getCurrentPlayer())
+                    updateCurrentPlayer(getCurrentPlayer())
+                    GAME_MOVE_COUNTER = GAME_MOVE_COUNTER.plus(1)
+                    isValidMove = true
+                    mMatchSummary = MatchSummary(isValidMove = isValidMove)
+                    updateMatchSummary()
+                }
             }
-        } else {
-            isValidMove = false
-            mMatchSummary = MatchSummary(
-                matchStatus = MatchStatus.MATCH_END,
-                isValidMove = isValidMove
-            )
+            else -> {
+                isValidMove = false
+                mMatchSummary = MatchSummary(
+                    matchStatus = MatchStatus.MATCH_END,
+                    isValidMove = isValidMove
+                )
+            }
         }
     }
 
-    fun getPlayerName(context: Context): String {
-        return if (getMatchSummary().isValidMove) {
-            return if (getCurrentPlayer() == Player.PLAYER_X_ID) {
-                context.getString(R.string.player_o)
-            } else {
-                context.getString(R.string.player_x)
-            }
-        } else {
-            ""
-        }
-    }
+    private fun isGameNotFinishedOrMoveAvailable() = !isGameFinished && GAME_MOVE_COUNTER <= MAX_MOVE_COUNTER
+
+    private fun isSlotAvailableForPlayerMove(index: Int) = getGameBoardByIndex(index) == 0
 
     fun getGameBoardByIndex(position: Int) = getGameBoard()[position / 3][position % 3]
 
@@ -70,69 +66,76 @@ class TicTacToeViewModel : ViewModel() {
     }
 
     private fun updateCurrentPlayer(playerTag: Int) {
-        mCurrentPlayer = if (playerTag == Player.PLAYER_X_ID) {
-            Player.PLAYER_O_ID
-        } else {
-            Player.PLAYER_X_ID
+        mCurrentPlayer = when (playerTag) {
+            Player.PLAYER_X_ID -> Player.PLAYER_O_ID
+            else -> Player.PLAYER_X_ID
         }
     }
 
     private fun validateWinnerByRow() {
         IntRange(0, 2).forEach { index ->
-            if (checkIndexIsNotEmpty(index, 0)
-                && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))
-            ) {
-                isGameFinished = true
-                mMatchSummary = MatchSummary(
-                    matchStatus = MatchStatus.WIN_BY_ROW,
-                    matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_ROW,
-                    isValidMove = isValidMove
-                )
+            when {
+                checkIndexIsNotEmpty(index, 0)
+                        && compareIndices(Pair(index, 0), Pair(index, 1), Pair(index, 2))
+                -> {
+                    isGameFinished = true
+                    mMatchSummary = MatchSummary(
+                        matchStatus = MatchStatus.WIN_BY_ROW,
+                        matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_ROW,
+                        isValidMove = isValidMove
+                    )
+                }
             }
         }
     }
 
     private fun validateWinnerByColumn() {
         IntRange(0, 2).forEach { index ->
-            if (checkIndexIsNotEmpty(0, index) &&
-                compareIndices(Pair(0, index), Pair(1, index), Pair(2, index))
-            ) {
+            when {
+                checkIndexIsNotEmpty(0, index) &&
+                        compareIndices(Pair(0, index), Pair(1, index), Pair(2, index))
+                -> {
+                    isGameFinished = true
+                    mMatchSummary = MatchSummary(
+                        matchStatus = MatchStatus.WIN_BY_COLUMN,
+                        matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_COLUMN,
+                        isValidMove = isValidMove
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validateWinnerByDiagonal() {
+        when {
+            checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
+                    checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
+            -> {
                 isGameFinished = true
                 mMatchSummary = MatchSummary(
-                    matchStatus = MatchStatus.WIN_BY_COLUMN,
-                    matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_COLUMN,
+                    matchStatus = MatchStatus.WIN_BY_DIAGONAL,
+                    matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_DIAGONAL,
                     isValidMove = isValidMove
                 )
             }
         }
     }
 
-    private fun validateWinnerByDiagonal() {
-        if (checkIndexIsNotEmpty(0, 0) && compareIndices(Pair(0, 0), Pair(1, 1), Pair(2, 2)) ||
-            checkIndexIsNotEmpty(0, 2) && compareIndices(Pair(0, 2), Pair(1, 1), Pair(2, 0))
-        ) {
-            isGameFinished = true
-            mMatchSummary = MatchSummary(
-                matchStatus = MatchStatus.WIN_BY_DIAGONAL,
-                matchSummary = getWinnerByName(getCurrentPlayer()) + " " + WON_BY_DIAGONAL,
-                isValidMove = isValidMove
-            )
-        }
-    }
-
     private fun validateMatchDrawn() {
-        if (GAME_MOVE_COUNTER == 9) {
-            isGameFinished = true
-            if (mMatchSummary.matchStatus != MatchStatus.WIN_BY_ROW &&
-                mMatchSummary.matchStatus != MatchStatus.WIN_BY_COLUMN &&
-                mMatchSummary.matchStatus != MatchStatus.WIN_BY_DIAGONAL
-            ) {
-                mMatchSummary = MatchSummary(
-                    matchStatus = MatchStatus.DRAW,
-                    matchSummary = MATCH_DRAWN,
-                    isValidMove = isValidMove
+        when (GAME_MOVE_COUNTER) {
+            MAX_MOVE_COUNTER -> {
+                isGameFinished = true
+                when {
+                    mMatchSummary.matchStatus != MatchStatus.WIN_BY_ROW &&
+                            mMatchSummary.matchStatus != MatchStatus.WIN_BY_COLUMN &&
+                            mMatchSummary.matchStatus != MatchStatus.WIN_BY_DIAGONAL
+                    -> mMatchSummary = MatchSummary(
+                        matchStatus = MatchStatus.DRAW,
+                        matchSummary = MATCH_DRAWN,
+                        isValidMove = isValidMove
 
-                )
+                    )
+                }
             }
         }
 
@@ -168,19 +171,31 @@ class TicTacToeViewModel : ViewModel() {
 
 
     private fun updateMatchSummary() {
-        if (GAME_MOVE_COUNTER > 4) {
-            validateWinnerByColumn()
-            validateWinnerByRow()
-            validateWinnerByDiagonal()
-            validateMatchDrawn()
+        when {
+            GAME_MOVE_COUNTER > 4 -> {
+                validateWinnerByColumn()
+                validateWinnerByRow()
+                validateWinnerByDiagonal()
+                validateMatchDrawn()
+            }
         }
     }
 
     private fun getWinnerByName(player: Int): String {
-        return if (player == Player.PLAYER_X_ID) {
-            Player.PLAYER_O_NAME
-        } else {
-            Player.PLAYER_X_NAME
+        return when (player) {
+            Player.PLAYER_X_ID -> Player.PLAYER_O_NAME
+            else -> Player.PLAYER_X_NAME
         }
     }
+
+    fun getPlayerIcon(context: Context): String {
+        return when {
+            getMatchSummary().isValidMove -> return when {
+                getCurrentPlayer() == Player.PLAYER_X_ID -> context.getString(R.string.player_o)
+                else -> context.getString(R.string.player_x)
+            }
+            else -> ""
+        }
+    }
+
 }
